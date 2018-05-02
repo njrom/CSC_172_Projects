@@ -1,54 +1,86 @@
 import java.util.ArrayList;
 import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.Collections;
+import java.util.HashMap;
 
 public class Graph {
+    private HashMap<String, Vertex> vertexNameLookUp = new HashMap<>();
     ArrayList<Vertex> vertices = new ArrayList<>();
-    double minX;
-    double maxX;
-    double minY;
-    double maxY;
+    private double minLog;
+    private double maxLog;
+    private double minLat;
+    private double maxLat;
 
-    private Vertex getVertex(String name){
-        for(Vertex v : vertices){
-            if(v.name.equals(name)) return v;
+    public ArrayList<Edge> shortestPath(String sourceName, String endName) {
+        ArrayList<Edge> edgePath = new ArrayList<>();
+        ArrayList<Vertex> vertexPath = new ArrayList<>();
+        Queue<Vertex> priorityQueue = new PriorityQueue<>();
+        for(Vertex v : this.vertices){
+            v.previous = null;
+            v.dist = Double.MAX_VALUE;
         }
-        throw new RuntimeException("Vertex was not contained in list");
+        Vertex source = this.vertexNameLookUp.get(sourceName);
+        source.dist = 0;
+        priorityQueue.add(source);
+        while(!priorityQueue.isEmpty()) {
+            source = priorityQueue.poll();
+            for (Edge e: source.edges) {
+                Vertex neighbor = e.vertexConnectedTo(source);
+                if(neighbor.dist > source.dist + e.weight) { // Shorter path was found
+                    neighbor.dist = source.dist + e.weight;
+                    neighbor.previous = source;
+                    priorityQueue.add(neighbor);
+                }
+            }
+        }
+        Vertex end = this.vertexNameLookUp.get(endName);
+        while(end.previous != null){
+            edgePath.add(end.getBackEdge());
+            vertexPath.add(end);
+            end = end.previous;
+        }
+        vertexPath.add(end);  // Adds start node (missed by the loop)
+        Collections.reverse(edgePath);
+        Collections.reverse(vertexPath);
+        System.out.println("Directions:");
+        for(Vertex v: vertexPath){
+            System.out.println(v.name);
+        }
+        return edgePath;
     }
 
-    private ArrayList<Edge> shortestPath(Vertex v1, Vertex v2){ //TODO: Implement Dijkstra’s algorithm
-        Queue<Edge> queue = new PriorityQueue<>();
-        ArrayList<Edge> shortestPath = new ArrayList<>();
-        for(Edge e : v1.edges) // Add on the edges to a priority queue to pick the next vertex to go to
-            queue.add(e);
 
-
-
-        return null;
-    }
-    // Public Methods
     public void addEdge(String name, String v1Name, String v2Name){
-        Vertex v1 = this.getVertex(v1Name);
-        Vertex v2 = this.getVertex(v2Name);
-        Edge e1 = new Edge(name, v1, v2);
-        v1.edges.add(e1);
-        v2.edges.add(e1); // For non directed Graph it goes both ways
+        Vertex v1 = this.vertexNameLookUp.get(v1Name);
+        Vertex v2 = this.vertexNameLookUp.get(v2Name);
+        Edge e = new Edge(name, v1, v2);
+        v1.edges.add(e);
+        v2.edges.add(e); // For non directed Graph it goes both ways
     }
     public void addVertex(String name, double x, double y){
         Vertex v = new Vertex(name, x , y);
         this.vertices.add(v);
+        this.vertexNameLookUp.put(v.name, v);
 
     }
-    public void updateRange(){
-        minX = vertices.get(0).x;
-        maxX = vertices.get(0).x;
-        minY = vertices.get(0).y;
-        maxY = vertices.get(0).y;
+    public void updateRange(int width, int height){
+        minLog = vertices.get(0).log;
+        maxLog = vertices.get(0).log;
+        minLat = vertices.get(0).lat;
+        maxLat = vertices.get(0).lat;
         for(Vertex v : vertices){
-            if(minX > v.x) minX = v.x;
-            if(maxX < v.x) maxX = v.x;
-            if(minY > v.y) minY = v.y;
-            if(maxY < v.y) maxY = v.y;
+            if(minLog > v.log) minLog = v.log;
+            if(maxLog < v.log) maxLog = v.log;
+            if(minLat > v.lat) minLat = v.lat;
+            if(maxLat < v.lat) maxLat = v.lat;
+        }
+        for(Vertex v: this.vertices) {
+            double x = ((this.minLog - v.log) / (this.minLog - this.maxLog)) * (width);
+            // double y = ((v.y - graph.minLat)/(graph.maxLat - graph.minLat))*height;
+            double y = ((this.maxLat - v.lat) / (this.maxLat - this.minLat)) * (height);
+            v.x = x + 10; // Update the vertex to have relative positions
+            v.y = y + 10;
         }
     }
 }

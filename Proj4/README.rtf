@@ -1,0 +1,28 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1561\cocoasubrtf200
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\margl1440\margr1440\vieww10800\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs28 \cf0 Nicholas Romano\
+ * netID: nromano2\
+ * Project 4: Street Mapping\
+ * classID: 99\
+
+\fs24 \
+
+\fs28  I did not collaborate with anyone on any part of this assignment. This project will map the shortest distance between to points by taking the most efficient streets.  To do this the street data is read in from a text files and converted to vertices arrays of edge objects which all contain a weight which is just the length of the edge in miles.  An implementation of Dijkstra\'92s algorithm will then determine the best possible path and print the directions to take and display it in green on the map if you have the \'97show feature enabled.  \
+The Project contains five java files and the three data files in its source directory\
+DataReader.java\
+Edge.java\
+Graph.java\
+StreetMap.java\
+Vertex.java\
+ur.txt\
+monroe.txt\
+nys.txt\
+\
+Extra Credit:   \'97iMap \
+I implemented an interactive map in which each of the vertices is drawn as a circle.  You can click any two circles and it will print the name of the locations into the console then calculate the fastest path between them, print out the directions and display the path in green on the screen. Due to the enormous number of vertices in monroe.txt and nys.txt only use the iMap feature with ur.txt otherwise it would be too hard to click on specific vertices.  \
+Also a note:  it will print to console when it has recognized you clicking on a vertex.  The Shape.contains() method seems to be a bit particular about where exactly you click so sometimes you may have click more than once to get it to recognize.  I\'92ve noticed this occasionally, but overall it hasn\'92t been any big issue to the feature.   }
